@@ -1,0 +1,11 @@
+# --- ustawienia dla noda external
+#elasticsearch.cluster-name: ES
+#elasticsearch.cluster-nodes: localhost:9300
+# --- ustawienia dla noda embedded
+spring:
+  data:
+    elasticsearch:
+      cluster-name=
+      cluster-nodes=
+#spring.data.elasticsearch.properties.*= # Additional properties used to configure the client.
+#spring.data.elasticsearch.repositories.enabled=true # Enable Elasticsearch repositories.
