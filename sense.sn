@@ -79,10 +79,13 @@ POST /docusafe/invoice
 GET /docusafe/invoice/1
 GET /docusafe/invoice/15
 GET /docusafe/invoice/1/_source
+
+GET /docusafe/invoice/_search
 GET /docusafe/_search
 
 #DELETE /docusafe/invoice/1
 GET /docusafe/invoice/1
+
 
 # MODIFY DATA (OVERRIDE ENTIRE DOCUMENT)
 PUT /docusafe/invoice/1
@@ -92,13 +95,17 @@ PUT /docusafe/invoice/1
 # MODIFY DATA (PARTIAL UPDATE)
 POST /docusafe/invoice/1/_update
 {
-    "doc": {"amount" :  200.00 }
+  "doc": {
+    "amount": 200
+  }
 }
 # MODIFY DATA - DYNAMIC SCRIPTS
 POST /docusafe/invoice/1/_update
 {
   "script": "ctx._source.amount+=100"
 }
+
+DELETE /docusafe
 PUT /docusafe
 GET /docusafe/_search
 # UPDATING DOCUMENT THAT MAY NOT EXIST (UPSERT)
@@ -187,13 +194,11 @@ GET /docusafe/invoice/_search
 GET /docusafe/invoice/_search
 {
   "query": {
-    "bool": {
+    "constant_score": {
       "filter": {
-        "bool": {
-          "must": {
-            "range": {
-               "cdate" : { "gt" : "2016-07-01" }
-            }
+        "range": {
+          "cdate": {
+            "gt": "2016-07-01"
           }
         }
       }
@@ -204,6 +209,7 @@ GET /docusafe/invoice/_search
 # SIMPLE AGGREGATIONS
 GET /docusafe/invoice/_search
 {
+  "size": 0,
   "aggs": {
     "tags_counter": {
       "terms": { "field": "tags" }
@@ -213,19 +219,24 @@ GET /docusafe/invoice/_search
 
 GET /docusafe/invoice/_search
 {
-    "aggs" : {
-        "tags_counter" : {
-            "terms" : { "field" : "tags" },
-            "aggs" : {
-                "avg_age" : {
-                    "avg" : { "field" : "amount" }
-                }
-            }
+  "size": 0,
+  "aggs": {
+    "tags_counter": {
+      "terms": {
+        "field": "tags"
+      },
+      "aggs": {
+        "avg_age": {
+          "avg": {
+            "field": "amount"
+          }
         }
+      }
     }
+  }
 }
 
-# BASIC TEXT ANALYSIS - THEORY AND APPLICATION
+# BASIC TEXT ANALYSIS - THEORY AND PRACTICE
 
 #The query-string search uses the _all field unless another field name has been specified.
 
@@ -270,8 +281,7 @@ GET /_analyze
   "tokenizer" : "standard",
   "token_filter" : ["snowball"],
   "text" : "detailed output",
-  "explain" : true,
-  "attributes" : ["keyword"]
+  "explain" : true
 }
 
 # MAPPINGS
@@ -334,6 +344,9 @@ POST /logs/transactions
 {
   "id": 27.25
 }
+
+GET /logs/transactions/_search
+
 GET /logs/transactions/_search
 {
   "query": {
@@ -410,7 +423,7 @@ PUT /db
     }
   }
 }
-# HOW TO ACCESS TO OBJECT TYPE
+# HOW TO ANALYZE BASED ON MAPPING OBJECT TYPE
 GET /db/_analyze
 {
   "field": "address.zipCode",
@@ -521,26 +534,6 @@ PUT /blog
 }
 
 # MULTIPLE FIELDS MAPPING
-PUT /blog
-{
-  "mappings": {
-    "article": {
-      "properties": {
-        "title": {
-          "type": "string",
-          "index": "analyzed",
-          "fields": {
-            "raw": {
-              "type": "string",
-              "index": "not_analyzed"
-            }
-          }
-        }
-      }
-    }
-  }
-}
-
 PUT /blog/article/1
 {
   "title": "Blog first article"
@@ -564,6 +557,27 @@ GET /blog/article/_search
     }
   ]
 }
+
+PUT /blog
+{
+  "mappings": {
+    "article": {
+      "properties": {
+        "title": {
+          "type": "string",
+          "index": "analyzed",
+          "fields": {
+            "raw": {
+              "type": "string",
+              "index": "not_analyzed"
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
 GET /blog/article/_search
 {
   "sort": [
@@ -593,13 +607,15 @@ GET /bank/account/_search
   "query": { "match_all": {} }
 }
 
-#{
+#{"query": {
 #    QUERY_NAME: {
 #        FIELD_NAME: {
+#            "VALUE"
 #            ARGUMENT: VALUE,
 #            ARGUMENT: VALUE,...
 #        }
 #    }
+# }
 #}
 
 
@@ -658,6 +674,7 @@ GET /bank/account/_search
     }
   }
 }
+# LET'S TRY WITH AFTER-ANALYZE FIELD VALUE
 GET /bank/account/_search
 {
   "query": {
@@ -741,7 +758,7 @@ GET /db/users/_search
   }
 }
 
-#COMBINING MULTIPLE CLAUSES (MUST, MUST_NOT, SHOULD, FILTER)
+#COMBINING MULTIPLE CLAUSES (MUST, MUST_NOT, SHOULD,FILTER)
 GET /bank/account/_search
 {
   "query": {
@@ -792,16 +809,14 @@ GET /docusafe/invoice/_search
   "query": {
     "bool": {
       "must": {
-          "match": {
-            "remark": "paid"
-          }
+        "match": {
+          "remark": "paid"
+        }
       },
       "filter": {
-        "bool": {
-          "must": {
-            "range": {
-               "amount" : { "gt" : 5 }
-            }
+        "range": {
+          "amount": {
+            "gt": 5
           }
         }
       }
@@ -915,6 +930,26 @@ GET /bank/account/_search
           }
         }
       ]
+    }
+  }
+}
+DELETE /blog
+PUT /blog
+{
+  "mappings": {
+    "post": {
+      "properties": {
+        "comments": {
+          "type": "nested",
+          "properties": {
+            "name":    { "type": "string"  },
+            "comment": { "type": "string"  },
+            "age":     { "type": "short"   },
+            "stars":   { "type": "short"   },
+            "date":    { "type": "date"    }
+          }
+        }
+      }
     }
   }
 }
@@ -1039,7 +1074,7 @@ GET /cars/transactions/_search
         }
       }
     },
-    "avg_price": {
+    "total_avg_price": {
       "avg": {
         "field": "price"
       }
@@ -1075,27 +1110,38 @@ GET /cars/transactions/_search
 # METRICS FOR INSIDE BUCKETS
 GET /cars/transactions/_search
 {
-   "size" : 0,
-   "aggs": {
-      "colors": {
-         "terms": {
-            "field": "color"
-         },
-         "aggs": {
-            "avg_price": { "avg": { "field": "price" }
+  "size": 0,
+  "aggs": {
+    "colors": {
+      "terms": {
+        "field": "color"
+      },
+      "aggs": {
+        "avg_price": {
+          "avg": {
+            "field": "price"
+          }
+        },
+        "makeBy": {
+          "terms": {
+            "field": "make"
+          },
+          "aggs": {
+            "min_price": {
+              "min": {
+                "field": "price"
+              }
             },
-            "makeBy" : {
-                "terms" : {
-                    "field" : "make"
-                },
-                "aggs" : {
-                    "min_price" : { "min": { "field": "price"} },
-                    "max_price" : { "max": { "field": "price"} }
-                }
+            "max_price": {
+              "max": {
+                "field": "price"
+              }
             }
-         }
+          }
+        }
       }
-   }
+    }
+  }
 }
 
 # EXTENDED STATS
@@ -1312,7 +1358,7 @@ GET /cars/transactions/_search
 }
 
 # RECAP
-# non-scoring query inside a filter clause affects both search results and aggregations.
+# query clause affects both search results and aggregations
 # filter bucket affects just aggregations.
 # post_filter affects just search results.
 
