@@ -1,11 +1,7 @@
 package com.github.pnowy.elastic.spring;
 
 import lombok.Data;
-import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.index.query.WrapperQueryBuilder;
-import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.SearchHits;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;

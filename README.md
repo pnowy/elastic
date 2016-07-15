@@ -1,7 +1,7 @@
 AGENDA
 -------
 
-1. Introduction
+1. Introduction (PRESENTATION)
 2. Downloading and running an Elasticsearch node
     - Elasticsearch
     - Kibana => Sense
@@ -33,7 +33,7 @@ AGENDA
 7. Basic text analysis theory and practice
     - the '_all' field & searching by example
     - exact values vs full text values
-    - inverted index (PRESENTATION)
+    - inverted index, analysis and analyzers (PRESENTATION)
     - build-in analyzers && custom analyzer definition (tokenizer, token_filter, char_filter)
 8. Mappings overview & query/filtering consequences
     - check the mapping of existing index
@@ -45,7 +45,7 @@ AGENDA
     - multiple fields mapping (old multifields) - one field for search and for example second field for sorting
 9. Searching one more time (accounts.json file)
     - lite query syntax, general query structure
-    - filter context, query context, scoring theory (https://www.elastic.co/guide/en/elasticsearch/guide/current/scoring-theory.html)
+    - filter context, query context, scoring theory (https://www.elastic.co/guide/en/elasticsearch/guide/current/scoring-theory.html) (PRESENTATION)
     - most important queries (match_all, match, term, terms, etc.) (https://www.elastic.co/guide/en/elasticsearch/guide/current/match-query.html)
     - combining queries (must, must_not, should, filter)
     - pagination, sorting
@@ -62,7 +62,7 @@ AGENDA
 11. JAVA clients
     - transport client vs node client
     - Java clients: the native client, JEST, Spring Elasticsearch (https://www.elastic.co/blog/found-java-clients-for-elasticsearch)
-12. Advanced subjects
+12. Advanced subjects (PRESENTATION + DEMO)
     - shards, replicas
     - modeling data (application side joins, denormalization, nested objects, parent-child relationship)
 13. Where to find more resources
